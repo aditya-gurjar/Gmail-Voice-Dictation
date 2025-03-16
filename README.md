@@ -26,6 +26,7 @@ A Chrome extension that enables voice dictation in Gmail with proper noun correc
 ## Development
 
 Built with TypeScript, utilizing:
+
 - Web Speech API for voice recognition
 - OpenAI API for proper noun correction
 - Chrome Extension Manifest V3
