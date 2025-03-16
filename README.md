@@ -21,7 +21,7 @@ A Chrome extension that enables voice dictation in Gmail with proper noun correc
 2. Click the extension icon in your browser
 3. Click "Start Dictation" to begin speaking
 4. Your speech will be transcribed, with proper nouns corrected
-5. Click "Stop Dictation" when finished
+5. Click "Stop Dictation" when finished. In case the extenstion popup gets hidden (due to a click somewhere, for instance), you can stop dictation by clicking on the diamond button at the bottom right corner.
 
 ## Development
 
