@@ -1,38 +1,37 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  mode: 'development',
+  mode: "production", // Using production mode to avoid CSP errors
   entry: {
-    popup: './src/popup/popup.ts',
-    content: './src/content/content.ts',
-    background: './src/background/background.ts'
+    popup: "./src/popup/popup.ts",
+    content: "./src/content/content.ts",
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js'
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].js",
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      }
-    ]
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: [".ts", ".js"],
   },
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: 'src/manifest.json', to: 'manifest.json' },
-        { from: 'src/popup/popup.html', to: 'popup.html' },
-        { from: 'src/assets', to: 'assets', noErrorOnMissing: true }
-      ]
+        { from: "src/manifest.json", to: "manifest.json" },
+        { from: "src/popup/popup.html", to: "popup.html" },
+        { from: "src/assets", to: "assets", noErrorOnMissing: true },
+      ],
     }),
-    new Dotenv()
-  ]
+  ],
+  // Prevent eval usage in webpack bundle
+  devtool: "inline-source-map", // Change from default to inline-source-map
 };

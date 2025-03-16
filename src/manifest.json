@@ -1,25 +1,26 @@
 {
-    "manifest_version": 3,
-    "name": "Gmail Voice Dictation",
-    "version": "1.0",
-    "description": "Voice dictation for Gmail with proper noun correction",
-    "permissions": ["storage", "activeTab"],
-    "host_permissions": ["https://mail.google.com/*"],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "action": {
-      "default_popup": "popup.html",
-      "default_icon": {
-        "16": "assets/icon16.png",
-        "48": "assets/icon48.png",
-        "128": "assets/icon128.png"
-      }
-    },
-    "content_scripts": [
-      {
-        "matches": ["https://mail.google.com/*"],
-        "js": ["content.js"]
-      }
-    ]
+  "manifest_version": 3,
+  "name": "Gmail Voice Dictation",
+  "version": "1.0",
+  "description": "Voice dictation for Gmail with proper noun correction",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://mail.google.com/*", "https://api.openai.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
+}
