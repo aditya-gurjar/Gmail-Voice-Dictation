@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "strict": true,
+      "esModuleInterop": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "sourceMap": true,
+      "typeRoots": ["./node_modules/@types", "./src/types"],
+      "lib": ["dom", "es6", "dom.iterable"]
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+}
