@@ -115,8 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
                   isRecording = true;
                   startBtn.textContent = "Stop Dictation";
                   updateStatus("Recording...", "recording");
-                  // Close the popup after starting dictation to let user return to Gmail
-                  // setTimeout(() => window.close(), 500);
                 } else {
                   updateStatus(
                     response?.error || "Failed to start dictation",

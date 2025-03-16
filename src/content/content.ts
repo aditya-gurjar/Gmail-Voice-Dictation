@@ -290,6 +290,7 @@ function startDictation() {
     recognition.onstart = () => {
       console.log("Dictation started");
       updateVisualIndicator(true, "Recording...");
+      showFloatingControl();
       chrome.runtime.sendMessage({
         action: "updateStatus",
         status: "Recording...",
@@ -327,6 +328,7 @@ function startDictation() {
     recognition.onend = () => {
       console.log("Dictation ended");
       updateVisualIndicator(false);
+      hideFloatingControl();
       chrome.runtime.sendMessage({
         action: "updateStatus",
         status: "Dictation stopped",
@@ -342,6 +344,14 @@ function stopDictation() {
   if (recognition) {
     recognition.stop();
     recognition = null;
+    hideFloatingControl(); // Hide the floating control
+    updateVisualIndicator(false);
+
+    // Send status update
+    chrome.runtime.sendMessage({
+      action: "updateStatus",
+      status: "Dictation stopped",
+    });
   }
 }
 
@@ -451,6 +461,105 @@ function insertTextIntoActiveElement(text: string) {
     activeTextArea.selectionEnd = newCursorPos;
   }
 }
+
+// Add this function to content.ts
+function createFloatingControl() {
+  // Check if control already exists
+  if (document.getElementById("gmail-voice-control")) {
+    return;
+  }
+
+  // Create floating button
+  const control = document.createElement("div");
+  control.id = "gmail-voice-control";
+  control.style.position = "fixed";
+  control.style.bottom = "20px";
+  control.style.right = "20px";
+  control.style.width = "50px";
+  control.style.height = "50px";
+  control.style.borderRadius = "50%";
+  control.style.backgroundColor = "#d93025";
+  control.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)";
+  control.style.zIndex = "9999";
+  control.style.display = "none";
+  control.style.justifyContent = "center";
+  control.style.alignItems = "center";
+  control.style.cursor = "pointer";
+  control.style.transition = "all 0.3s ease";
+
+  // Add microphone/stop icon
+  control.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+      <path d="M18 10.5l-6-6-6 6 6 6z"/>
+    </svg>
+  `;
+
+  // Add tooltip
+  control.title = "Stop Dictation";
+
+  // Add click handler to stop dictation
+  control.addEventListener("click", (e) => {
+    // Stop event propagation to prevent focus change
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Store the currently active text area before stopping
+    const currentTextArea = activeTextArea;
+
+    // Stop dictation
+    stopDictation();
+    hideFloatingControl();
+
+    // After stopping, ensure the original compose area is refocused
+    if (currentTextArea) {
+      setTimeout(() => {
+        currentTextArea.focus();
+      }, 50);
+    }
+  });
+
+  control.addEventListener("mouseover", () => {
+    control.style.transform = "scale(1.1)";
+  });
+
+  control.addEventListener("mouseout", () => {
+    control.style.transform = "scale(1)";
+  });
+
+  document.body.appendChild(control);
+}
+
+// Function to show the floating control
+function showFloatingControl() {
+  const control = document.getElementById("gmail-voice-control");
+  if (control) {
+    control.style.display = "flex";
+  } else {
+    createFloatingControl();
+    setTimeout(() => {
+      const newControl = document.getElementById("gmail-voice-control");
+      if (newControl) {
+        newControl.style.display = "flex";
+      }
+    }, 100);
+  }
+}
+
+// Function to hide the floating control
+function hideFloatingControl() {
+  const control = document.getElementById("gmail-voice-control");
+  if (control) {
+    control.style.display = "none";
+  }
+}
+
+// Cleanup function when the page unloads
+window.addEventListener("beforeunload", () => {
+  if (recognition) {
+    recognition.stop();
+  }
+  hideFloatingControl();
+});
 
 // Initialize the content script
 initialize();
